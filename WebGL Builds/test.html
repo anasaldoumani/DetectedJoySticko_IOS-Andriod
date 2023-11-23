@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
 </head>
 <body>
-<div id="unity-container" class="unity-desktop">
+<div id="unity-container" class="unity-desktop" style="display: none;">
     <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
     <div id="unity-loading-bar">
         <div id="unity-logo"></div>
@@ -23,24 +23,26 @@
         <div id="unity-build-title">My project (17)</div>
     </div>
 </div>
-<div id="mobile-greeting" style="display: none;">
+<div id="greeting" style="display: none;">
     <p>Hi iOS/Android User!</p>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        var userAgent = navigator.userAgent;
         var container = document.getElementById("unity-container");
-        var canvas = document.getElementById("unity-canvas");
-        var loadingBar = document.getElementById("unity-loading-bar");
-        var progressBarFull = document.getElementById("unity-progress-bar-full");
-        var fullscreenButton = document.getElementById("unity-fullscreen-button");
-        var warningBanner = document.getElementById("unity-warning");
+        var greetingElement = document.getElementById('greeting');
 
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        if (/iPhone|iPad|iPod|Android/i.test(userAgent)) {
+            greetingElement.style.display = 'block';
             container.style.display = 'none';
-            document.getElementById('mobile-greeting').style.display = 'block';
         } else {
             container.style.display = 'block';
+            var canvas = document.getElementById("unity-canvas");
+            var loadingBar = document.getElementById("unity-loading-bar");
+            var progressBarFull = document.getElementById("unity-progress-bar-full");
+            var fullscreenButton = document.getElementById("unity-fullscreen-button");
+            var warningBanner = document.getElementById("unity-warning");
 
             var buildUrl = "Build";
             var loaderUrl = buildUrl + "/WebGL Builds.loader.js";
