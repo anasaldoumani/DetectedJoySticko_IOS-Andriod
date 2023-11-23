@@ -28,90 +28,66 @@
 </div>
 
 <script>
-    var container = document.querySelector("#unity-container");
-    var canvas = document.querySelector("#unity-canvas");
-    var loadingBar = document.querySelector("#unity-loading-bar");
-    var progressBarFull = document.querySelector("#unity-progress-bar-full");
-    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-    var warningBanner = document.querySelector("#unity-warning");
-
-    // Shows a temporary message banner/ribbon for a few seconds, or
-    // a permanent error message on top of the canvas if type=='error'.
-    // If type=='warning', a yellow highlight color is used.
-    // Modify or remove this function to customize the visually presented
-    // way that non-critical warnings and error messages are presented to the
-    // user.
-    function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-            warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-            if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-            setTimeout(function() {
-                warningBanner.removeChild(div);
-                updateBannerVisibility();
-            }, 5000);
-        }
-        updateBannerVisibility();
-    }
-
-    var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/WebGL Builds.loader.js";
-    var config = {
-        dataUrl: buildUrl + "/WebGL Builds.data.gz",
-        frameworkUrl: buildUrl + "/WebGL Builds.framework.js.gz",
-        codeUrl: buildUrl + "/WebGL Builds.wasm.gz",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "My project (17)",
-        productVersion: "0.1",
-        showBanner: unityShowBanner,
-    };
-
-    // By default, Unity keeps WebGL canvas render target size matched with
-    // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-    // Set this to false if you want to decouple this synchronization from
-    // happening inside the engine, and you would instead like to size up
-    // the canvas DOM size and WebGL render target sizes yourself.
-    // config.matchWebGLToCanvasSize = false;
-
+    var container = document.getElementById("unity-container");
+    var canvas = document.getElementById("unity-canvas");
+    var loadingBar = document.getElementById("unity-loading-bar");
+    var progressBarFull = document.getElementById("unity-progress-bar-full");
+    var fullscreenButton = document.getElementById("unity-fullscreen-button");
+    var warningBanner = document.getElementById("unity-warning");
 
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Display the greeting for iOS and Android users
+        container.style.display = 'none';
         document.getElementById('mobile-greeting').style.display = 'block';
-
-        // Hide the Unity WebGL player for iOS and Android users
-        document.getElementById('unity-container').style.display = 'none';
     } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        container.style.display = 'block';
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/WebGL Builds.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/WebGL Builds.data.gz",
+            frameworkUrl: buildUrl + "/WebGL Builds.framework.js.gz",
+            codeUrl: buildUrl + "/WebGL Builds.wasm.gz",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "My project (17)",
+            productVersion: "0.1",
+            showBanner: function (msg, type) {
+                var div = document.createElement('div');
+                div.innerHTML = msg;
+                warningBanner.appendChild(div);
+                if (type == 'error') {
+                    div.style = 'background: red; padding: 10px;';
+                } else {
+                    if (type == 'warning') {
+                        div.style = 'background: yellow; padding: 10px;';
+                    }
+                    setTimeout(function() {
+                        warningBanner.removeChild(div);
+                        warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+                    }, 5000);
+                }
+            },
+        };
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = function () {
+            createUnityInstance(canvas, config, function (progress) {
+                progressBarFull.style.width = 100 * progress + "%";
+            }).then(function (unityInstance) {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = function () {
+                    unityInstance.SetFullscreen(1);
+                };
+            }).catch(function (message) {
+                alert(message);
+            });
+        };
+
+        document.body.appendChild(script);
     }
-
-    loadingBar.style.display = "block";
-
-    var script = document.createElement("script");
-    script.src = loaderUrl;
-    script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-            progressBarFull.style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
-            loadingBar.style.display = "none";
-            fullscreenButton.onclick = () => {
-                unityInstance.SetFullscreen(1);
-            };
-        }).catch((message) => {
-            alert(message);
-        });
-    };
-
-    document.body.appendChild(script);
-
 </script>
 </body>
 </html>
-
