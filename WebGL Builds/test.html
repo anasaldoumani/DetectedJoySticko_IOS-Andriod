@@ -83,9 +83,11 @@
     if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Display the greeting for iOS and Android users
         document.getElementById('mobile-greeting').style.display = 'block';
-    }else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
+        // Hide the Unity WebGL player for iOS and Android users
+        document.getElementById('unity-container').style.display = 'none';
+    } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
         canvas.style.width = "960px";
         canvas.style.height = "600px";
     }
