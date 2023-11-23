@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Detection</title>
+</head>
+<body>
+<div id="greeting"></div>
+
+<script>
+    function detectDevice() {
+        var userAgent = navigator.userAgent;
+        var greetingElement = document.getElementById('greeting');
+
+        if (/iPhone|iPad|iPod|Android/i.test(userAgent)) {
+            greetingElement.innerText = 'Hi iOS/Android User!';
+        } else {
+            greetingElement.innerText = 'Hi PC User!';
+        }
+    }
+
+    detectDevice();
+</script>
+</body>
+</html>
+
+
